@@ -1,0 +1,118 @@
+<html>
+<head>
+    <script type="text/javascript" src="js/vis/dist/vis.min.js"></script>
+    <link href="js/vis/dist/vis.min.css" rel="stylesheet" type="text/css" />
+
+    <style type="text/css">
+        #mynetwork {
+            width: 600px;
+            height: 400px;
+            border: 1px solid lightgray;
+        }
+    </style>
+</head>
+<body>
+<div id="mynetwork"></div>
+
+<script type="text/javascript">
+	var clusterIndex = 0;
+	var clusters = [];
+    var lastClusterZoomLevel = 0;
+    var clusterFactor = 0.9;
+
+    // create an array with nodes
+    var nodes = [
+        {id: 1, label: 'ESN LILLE', shape: 'box',cid:1},
+        {id: 2, label: 'TEAM', shape: 'box', cid:1, team:1},
+        {id: 3, label: 'OUTILS', shape: 'box', cid:1},
+        {id: 4, label: 'MISSION', shape: 'box', cid:1},
+		{id: 5, label: 'BOARD', shape: 'box', cid:1, team:1},
+		{id: 6, label: 'GTI', shape: 'box', cid:1, team:1},
+		{id: 7, label: 'POLES', shape: 'box', cid:1, team:1},
+		{id: 8, label: 'SCV', shape: 'box', cid:1, team:1},
+		{id: 9, label: 'PRESIDENT(E)', shape: 'box', cid:1, team:1},
+		{id: 10, label: 'VP', shape: 'box', cid:1, team:1},
+		{id: 11, label: 'RESPO', shape: 'box', cid:1, team:1}
+    ];
+
+    // create an array with edges
+    var edges =[
+        {from: 2, to: 1, label: 'QUI ?', font: {align: 'top'}, length: 200},
+        {from: 3, to: 1, label: 'COMMENT ?', font: {align: 'top'}, length: 200},
+        {from: 4, to: 1, label: 'QUOI ?', font: {align: 'top'}, length: 200},
+		{from: 5, to: 2},
+		{from: 6, to: 2},
+		{from: 7, to: 2},
+		{from: 8, to: 2},
+		{from: 9, to: 5},
+		{from: 10, to: 5},
+		{from: 11, to: 5}
+    ];
+
+    // create a network
+    var container = document.getElementById('mynetwork');
+
+    // provide the data in the vis format
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+	
+    var options = { 
+
+	};
+
+    // initialize your network!
+	var network = new vis.Network(container, data, options);
+	//network.clustering.cluster(options);
+	clusterTEAM();
+	clusterESN();
+	
+	function clusterESN(){
+		network.setData(data);
+	    optionsESN = { 
+			joinCondition:function(nodeOptions) {
+			return nodeOptions.cid === 1;
+			},
+			clusterNodeProperties: {
+				label:'ESN LILLE',
+				id:'clusterESN', 
+				shape: 'box',
+				allowSingleNodeCluster: true
+			},
+			clusterEdgeProperties: {hidden: true}
+		};
+		network.cluster(optionsESN);	
+		click();
+	}
+	
+	function clusterTEAM(){
+		network.setData(data);
+	    optionsTEAM = { 
+			joinCondition:function(nodeOptions) {
+			return nodeOptions.team === 1;
+			},
+			clusterNodeProperties: {
+				label:'TEAM',
+				id:'clusterTEAM', 
+				shape: 'box',
+				allowSingleNodeCluster: true
+			},
+		};
+		network.cluster(optionsTEAM);
+		click();		
+	}
+	function click(){
+    network.on('click', function (params) {
+        if (params.nodes.length == 1) {
+            if (network.isCluster(params.nodes[0]) == true) {
+                network.openCluster(params.nodes[0]);
+            }
+        }
+    });
+	};
+	
+
+	</script>
+</body>
+</html>
