@@ -22,17 +22,17 @@
 
     // create an array with nodes
     var nodes = [
-        {id: 1, label: 'ESN LILLE', shape: 'box',cid:1},
-        {id: 2, label: 'TEAM', shape: 'box', cid:1, team:1},
-        {id: 3, label: 'OUTILS', shape: 'box', cid:1},
-        {id: 4, label: 'MISSION', shape: 'box', cid:1},
-		{id: 5, label: 'BOARD', shape: 'box', cid:1, team:1},
-		{id: 6, label: 'GTI', shape: 'box', cid:1, team:1},
-		{id: 7, label: 'POLES', shape: 'box', cid:1, team:1},
-		{id: 8, label: 'SCV', shape: 'box', cid:1, team:1},
-		{id: 9, label: 'PRESIDENT(E)', shape: 'box', cid:1, team:1},
-		{id: 10, label: 'VP', shape: 'box', cid:1, team:1},
-		{id: 11, label: 'RESPO', shape: 'box', cid:1, team:1}
+        {id: 1, label: 'ESN LILLE', shape: 'box',esn:1},
+        {id: 2, label: 'TEAM', shape: 'box', team:1},
+        {id: 3, label: 'OUTILS', shape: 'box', esn:1},
+        {id: 4, label: 'MISSION', shape: 'box', esn:1},
+		{id: 5, label: 'BOARD', shape: 'box', board:1},
+		{id: 6, label: 'GTI', shape: 'box', team:1},
+		{id: 7, label: 'POLES', shape: 'box', team:1},
+		{id: 8, label: 'SCV', shape: 'box', team:1},
+		{id: 9, label: 'PRESIDENT E', shape: 'box', board:1},
+		{id: 10, label: 'VP', shape: 'box', board:1},
+		{id: 11, label: 'RESPOS', shape: 'box', board:1}
     ];
 
     // create an array with edges
@@ -65,14 +65,16 @@
     // initialize your network!
 	var network = new vis.Network(container, data, options);
 	//network.clustering.cluster(options);
+	clusterBOARD();
 	clusterTEAM();
 	clusterESN();
+
 	
 	function clusterESN(){
-		network.setData(data);
+		//network.setData(data);
 	    optionsESN = { 
 			joinCondition:function(nodeOptions) {
-			return nodeOptions.cid === 1;
+			return nodeOptions.esn === 1;
 			},
 			clusterNodeProperties: {
 				label:'ESN LILLE',
@@ -86,13 +88,33 @@
 		click();
 	}
 	
-	function clusterTEAM(){
+	function clusterBOARD(){
 		network.setData(data);
+	    optionsBOARD = { 
+			joinCondition:function(nodeOptions) {
+			return nodeOptions.board === 1;
+			},
+			clusterNodeProperties: {
+				team: 1,
+				label:'BOARD',
+				id:'clusterBOARD', 
+				shape: 'box',
+				allowSingleNodeCluster: true
+			},
+			//clusterEdgeProperties: {hidden: true}
+		};
+		network.cluster(optionsBOARD);	
+		click();
+	}
+	
+	function clusterTEAM(){
+		//network.setData(data);
 	    optionsTEAM = { 
 			joinCondition:function(nodeOptions) {
 			return nodeOptions.team === 1;
 			},
 			clusterNodeProperties: {
+				esn : 1,
 				label:'TEAM',
 				id:'clusterTEAM', 
 				shape: 'box',
@@ -104,9 +126,11 @@
 	}
 	function click(){
     network.on('click', function (params) {
+		//document.write(params.nodes);
         if (params.nodes.length == 1) {
             if (network.isCluster(params.nodes[0]) == true) {
                 network.openCluster(params.nodes[0]);
+				
             }
         }
     });
