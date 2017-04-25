@@ -1,0 +1,202 @@
+<!doctype html>
+<html>
+<head>
+  <title>Network | Circular images</title>
+
+  <style type="text/css">
+    body {
+      font: 10pt arial;
+    }
+    #mynetwork {
+      width: 800px;
+      height: 800px;
+      border: 1px solid lightgray;
+      background-color:#333333;
+    }
+  </style>
+
+  <script type="text/javascript" src="vis/dist/vis.min.js"></script>
+  <link href="vis/dist/vis.min.css" rel="stylesheet" type="text/css" />
+
+  <script type="text/javascript"> 
+    var DIR = 'img_cm/';
+
+    var nodes = null;
+    var edges = null;
+    var network = null;
+
+    // Called when the Visualization API is loaded.
+    function draw() {
+
+      // create people.
+      // value corresponds with the age of the person
+      var nodes = [
+        { id: 1, label: 'ESN LILLE',       shape: 'circularImage', esn:1,    image: DIR + 'icon_esnl.jpg'       },
+        { id: 3, label: 'OUTILS',          shape: 'circularImage', esn:1,    image: DIR + 'icon_outils.png'     },
+        { id: 4, label: 'MISSION',         shape: 'circularImage', esn:1,    image: DIR + 'icon_missions.jpg'   },
+
+        { id: 2, label: 'TEAM',            shape: 'circularImage', team:1,   image: DIR + 'icon_team.png'       },
+        { id: 6, label: 'GTI',             shape: 'circularImage', team:1,   image: DIR + 'icon_gti.jpg'        },
+        { id: 7, label: 'POLES',           shape: 'circularImage', team:1,   image: DIR + 'icon_pole.jpg'       },
+        { id: 8, label: 'SCV',             shape: 'circularImage', team:1,   image: DIR + 'icon_scv.jpg'        },
+
+        { id: 5, label: 'BOARD',           shape: 'circularImage', board:1,  image: DIR + 'icon_board.jpg'      },
+        { id: 9, label: 'PRESIDENT E',     shape: 'circularImage', board:1,  image: DIR + 'icon_president.png'  },
+        { id: 10, label: 'VP',             shape: 'circularImage', board:1,  image: DIR + 'icon_vp.png'         },
+        { id: 11, label: 'RESPOS',         shape: 'circularImage', board:1,  image: DIR + 'icon_respo.jpg'      },
+        { id: 12, label: 'SECRETAIRE',     shape: 'circularImage', board:1,  image: DIR + 'icon_secretaire.jpg' },
+        { id: 13, label: 'TRESORIER E',    shape: 'circularImage', board:1,  image: DIR + 'icon_tresorier.jpg'  },
+    
+        { id: 14, label: 'COMMUNICATION',  shape: 'circularImage', pole:1,   image: DIR + 'icon_com.jpg'        },
+        { id: 15, label: 'CULTURE',        shape: 'circularImage', pole:1,   image: DIR + 'icon_culture.png'    },
+        { id: 16, label: 'PARTENARIAT',    shape: 'circularImage', pole:1,   image: DIR + 'icon_part.jpg'       },
+        { id: 17, label: 'SOIREES',        shape: 'circularImage', pole:1,   image: DIR + 'icon_soirees.png'    },
+        { id: 18, label: 'SPORT',          shape: 'circularImage', pole:1,   image: DIR + 'icon_sport.jpg'      },
+        { id: 19, label: 'WEB',            shape: 'circularImage', pole:1,   image: DIR + 'icon_web.jpg'        } 
+    ];
+
+      // create connections between people
+      // value corresponds with the amount of contact between two people
+      edges = [
+        { from: 2,  to: 1,  label: 'QUI ?',     font: {align: 'top'}, length: 200 },
+        { from: 3,  to: 1,  label: 'COMMENT ?', font: {align: 'top'}, length: 200 },
+        { from: 4,  to: 1,  label: 'QUOI ?',    font: {align: 'top'}, length: 200 },
+        { from: 5,  to: 2                                                         },
+        { from: 6,  to: 2                                                         },
+        { from: 7,  to: 2                                                         },
+        { from: 8,  to: 2                                                         },
+        { from: 9,  to: 5                                                         },
+        { from: 10, to: 5                                                         },
+        { from: 11, to: 5                                                         },
+        { from: 12, to: 5                                                         },
+        { from: 13, to: 5                                                         },
+        { from: 14, to: 11                                                        },
+        { from: 15, to: 11                                                        },
+        { from: 16, to: 11                                                        },
+        { from: 17, to: 11                                                        },
+        { from: 18, to: 11                                                        },
+        { from: 19, to: 11                                                        }
+    ];
+      
+      // create a network
+      var container = document.getElementById('mynetwork');
+      var data = {
+        nodes: nodes,
+        edges: edges
+      };
+      var options = {
+        nodes: {
+          borderWidth:4,
+          size:30,
+	      color: {
+            border: '#222222',
+            background: '#666666'
+          },
+          font:{color:'#eeeeee'}
+        },
+        edges: {
+          color: 'lightgray'
+        }
+      };
+      
+      network = new vis.Network(container, data, options);
+/*
+      clusterPOLE();
+      clusterBOARD();
+      clusterTEAM();
+      clusterESN();
+
+      function clusterESN(){
+      //network.setData(data);
+        optionsESN = { 
+        joinCondition:function(nodeOptions) {
+        return nodeOptions.esn === 1;
+        },
+        clusterNodeProperties: {
+          label:'ESN LILLE',
+          id:'clusterESN', 
+          shape: 'circularImage',
+          allowSingleNodeCluster: true
+        },
+        clusterEdgeProperties: {hidden: true}
+      };
+      network.cluster(optionsESN);  
+      click();
+      }
+      
+      function clusterBOARD(){
+        network.setData(data);
+          optionsBOARD = { 
+          joinCondition:function(nodeOptions) {
+          return nodeOptions.board === 1;
+          },
+          clusterNodeProperties: {
+            team: 1,
+            label:'BOARD',
+            id:'clusterBOARD', 
+            shape: 'circularImage',
+            allowSingleNodeCluster: true
+          },
+          //clusterEdgeProperties: {hidden: true}
+        };
+        network.cluster(optionsBOARD);  
+        click();
+      }
+      
+      function clusterTEAM(){
+        //network.setData(data);
+          optionsTEAM = { 
+          joinCondition:function(nodeOptions) {
+          return nodeOptions.team === 1;
+          },
+          clusterNodeProperties: {
+            esn : 1,
+            label:'TEAM',
+            id:'clusterTEAM', 
+            shape: 'circularImage',
+            allowSingleNodeCluster: true
+          },
+        };
+        network.cluster(optionsTEAM);
+        click();    
+      }
+
+      function clusterPOLE() {
+        //network.setData(data);
+          optionsPOLE = { 
+          joinCondition:function(nodeOptions) {
+          return nodeOptions.pole === 1;
+          },
+          clusterNodeProperties: {
+            pole : 1,
+            label:'RESPOS',
+            id:'clusterPOLE', 
+            shape: 'circularImage',
+            allowSingleNodeCluster: true
+          },
+        };
+        network.cluster(optionsPOLE);
+        click();
+      }
+
+      function click(){
+      network.on('click', function (params) {
+      //document.write(params.nodes);
+          if (params.nodes.length == 1) {
+              if (network.isCluster(params.nodes[0]) == true) {
+                  network.openCluster(params.nodes[0]);
+          
+              }
+          }
+      });
+  };*/
+    }
+  </script>
+  
+</head>
+
+<body onload="draw()">
+
+<div id="mynetwork"></div>
+</body>
+</html>

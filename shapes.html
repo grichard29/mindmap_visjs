@@ -5,16 +5,20 @@
 
     <style type="text/css">
         #mynetwork {
-            width: 600px;
-            height: 400px;
+            width: 800px;
+            height: 800px;
             border: 1px solid lightgray;
-        }
+       		background-color:#333333;
+       }
     </style>
 </head>
 <body>
 <div id="mynetwork"></div>
 
 <script type="text/javascript">
+
+    var DIR = 'js/img_cm/';
+
 	var clusterIndex = 0;
 	var clusters = [];
     var lastClusterZoomLevel = 0;
@@ -22,21 +26,33 @@
 
     // create an array with nodes
     var nodes = [
-        {id: 1, label: 'ESN LILLE', shape: 'box',esn:1},
-        {id: 2, label: 'TEAM', shape: 'box', team:1},
-        {id: 3, label: 'OUTILS', shape: 'box', esn:1},
-        {id: 4, label: 'MISSION', shape: 'box', esn:1},
-		{id: 5, label: 'BOARD', shape: 'box', board:1},
-		{id: 6, label: 'GTI', shape: 'box', team:1},
-		{id: 7, label: 'POLES', shape: 'box', team:1},
-		{id: 8, label: 'SCV', shape: 'box', team:1},
-		{id: 9, label: 'PRESIDENT E', shape: 'box', board:1},
-		{id: 10, label: 'VP', shape: 'box', board:1},
-		{id: 11, label: 'RESPOS', shape: 'box', board:1}
+        {id: 1, label: 'ESN LILLE', shape: 'circularImage',esn:1, image: DIR + 'icon_esnl.jpg'},
+        {id: 3, label: 'OUTILS', shape: 'circularImage', esn:1, image: DIR + 'icon_outils.png'},
+        {id: 4, label: 'MISSION', shape: 'circularImage', esn:1, image: DIR + 'icon_missions.jpg'},
+
+        {id: 2, label: 'TEAM', shape: 'circularImage', team:1, image: DIR + 'icon_team.png'},
+		{id: 6, label: 'GTI', shape: 'circularImage', team:1, image: DIR + 'icon_gti.jpg'},
+		{id: 7, label: 'POLES', shape: 'circularImage', team:1, image: DIR + 'icon_pole.jpg'},
+		{id: 8, label: 'SCV', shape: 'circularImage', team:1, image: DIR + 'icon_scv.jpg'},
+
+		{id: 5, label: 'BOARD', shape: 'circularImage', board:1, image: DIR + 'icon_board.jpg'},
+		{id: 9, label: 'PRESIDENT E', shape: 'circularImage', board:1, image: DIR + 'icon_president.png'},
+		{id: 10, label: 'VP', shape: 'circularImage', board:1, image: DIR + 'icon_vp.png'},
+		{id: 11, label: 'RESPOS', shape: 'circularImage', board:1, image: DIR + 'icon_respo.jpg'},
+		{id: 12, label: 'SECRETAIRE', shape: 'circularImage', board:1, image: DIR + 'icon_secretaire.jpg'},
+		{id: 13, label: 'TRESORIER E', shape: 'circularImage', board:1, image: DIR + 'icon_tresorier.jpg'}/*,
+		
+		{id: 14, label: 'COMMUNICATION', shape: 'circularImage', pole:1, image: DIR + 'icon_com.jpg'},
+		{id: 15, label: 'CULTURE', shape: 'circularImage', pole:1, image: DIR + 'icon_culture.png'},
+		{id: 16, label: 'PARTENARIAT', shape: 'circularImage', pole:1, image: DIR + 'icon_part.jpg'},
+		{id: 17, label: 'SOIREES', shape: 'circularImage', pole:1, image: DIR + 'icon_soirees.png'},
+		{id: 18, label: 'SPORT', shape: 'circularImage', pole:1, image: DIR + 'icon_sport.jpg'},
+		{id: 19, label: 'WEB', shape: 'circularImage', pole:1, image: DIR + 'icon_web.jpg'} 
+		*/
     ];
 
     // create an array with edges
-    var edges =[
+    var edges = [
         {from: 2, to: 1, label: 'QUI ?', font: {align: 'top'}, length: 200},
         {from: 3, to: 1, label: 'COMMENT ?', font: {align: 'top'}, length: 200},
         {from: 4, to: 1, label: 'QUOI ?', font: {align: 'top'}, length: 200},
@@ -46,7 +62,15 @@
 		{from: 8, to: 2},
 		{from: 9, to: 5},
 		{from: 10, to: 5},
-		{from: 11, to: 5}
+		{from: 11, to: 5},
+		{from: 12, to: 5},
+		{from: 13, to: 5}/*,
+		{from: 14, to: 11},
+		{from: 15, to: 11},
+		{from: 16, to: 11},
+		{from: 17, to: 11},
+		{from: 18, to: 11},
+		{from: 19, to: 11}*/
     ];
 
     // create a network
@@ -65,6 +89,7 @@
     // initialize your network!
 	var network = new vis.Network(container, data, options);
 	//network.clustering.cluster(options);
+	//clusterPOLE();
 	clusterBOARD();
 	clusterTEAM();
 	clusterESN();
@@ -79,7 +104,7 @@
 			clusterNodeProperties: {
 				label:'ESN LILLE',
 				id:'clusterESN', 
-				shape: 'box',
+				shape: 'circularImage',
 				allowSingleNodeCluster: true
 			},
 			clusterEdgeProperties: {hidden: true}
@@ -98,7 +123,7 @@
 				team: 1,
 				label:'BOARD',
 				id:'clusterBOARD', 
-				shape: 'box',
+				shape: 'circularImage',
 				allowSingleNodeCluster: true
 			},
 			//clusterEdgeProperties: {hidden: true}
@@ -117,23 +142,42 @@
 				esn : 1,
 				label:'TEAM',
 				id:'clusterTEAM', 
-				shape: 'box',
+				shape: 'circularImage',
 				allowSingleNodeCluster: true
 			},
 		};
 		network.cluster(optionsTEAM);
 		click();		
 	}
+/*
+	function clusterPOLE() {
+		//network.setData(data);
+	    optionsPOLE = { 
+			joinCondition:function(nodeOptions) {
+			return nodeOptions.pole === 1;
+			},
+			clusterNodeProperties: {
+				pole : 1,
+				label:'RESPOS',
+				id:'clusterPOLE', 
+				shape: 'circularImage',
+				allowSingleNodeCluster: true
+			},
+		};
+		network.cluster(optionsPOLE);
+		click();
+	}
+*/
 	function click(){
-    network.on('click', function (params) {
-		//document.write(params.nodes);
-        if (params.nodes.length == 1) {
-            if (network.isCluster(params.nodes[0]) == true) {
-                network.openCluster(params.nodes[0]);
-				
-            }
-        }
-    });
+	    network.on('click', function (params) {
+			//document.write(params.nodes);
+	        if (params.nodes.length == 1) {
+	            if (network.isCluster(params.nodes[0]) == true) {
+	                network.openCluster(params.nodes[0]);
+					
+	            }
+	        }
+	    });
 	};
 	
 
