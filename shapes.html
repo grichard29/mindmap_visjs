@@ -11,11 +11,14 @@
        		background-color:#333333;
        }
     </style>
+
 </head>
 <body>
-<div id="mynetwork"></div>
 
-<script type="text/javascript">
+	<div id="mynetwork"></div>
+	
+	<script type="text/javascript">
+
 
     var DIR = 'js/img_cm/';
 
@@ -38,9 +41,9 @@
 		{id: 5, label: 'BOARD', shape: 'circularImage', board:1, image: DIR + 'icon_board.jpg'},
 		{id: 9, label: 'PRESIDENT E', shape: 'circularImage', board:1, image: DIR + 'icon_president.png'},
 		{id: 10, label: 'VP', shape: 'circularImage', board:1, image: DIR + 'icon_vp.png'},
-		{id: 11, label: 'RESPOS', shape: 'circularImage', board:1, image: DIR + 'icon_respo.jpg'},
+		{id: 11, label: 'RESPOS', shape: 'circularImage', pole:1, image: DIR + 'icon_respo.jpg'},
 		{id: 12, label: 'SECRETAIRE', shape: 'circularImage', board:1, image: DIR + 'icon_secretaire.jpg'},
-		{id: 13, label: 'TRESORIER E', shape: 'circularImage', board:1, image: DIR + 'icon_tresorier.jpg'}/*,
+		{id: 13, label: 'TRESORIER E', shape: 'circularImage', board:1, image: DIR + 'icon_tresorier.jpg'},
 		
 		{id: 14, label: 'COMMUNICATION', shape: 'circularImage', pole:1, image: DIR + 'icon_com.jpg'},
 		{id: 15, label: 'CULTURE', shape: 'circularImage', pole:1, image: DIR + 'icon_culture.png'},
@@ -48,7 +51,7 @@
 		{id: 17, label: 'SOIREES', shape: 'circularImage', pole:1, image: DIR + 'icon_soirees.png'},
 		{id: 18, label: 'SPORT', shape: 'circularImage', pole:1, image: DIR + 'icon_sport.jpg'},
 		{id: 19, label: 'WEB', shape: 'circularImage', pole:1, image: DIR + 'icon_web.jpg'} 
-		*/
+		
     ];
 
     // create an array with edges
@@ -64,13 +67,13 @@
 		{from: 10, to: 5},
 		{from: 11, to: 5},
 		{from: 12, to: 5},
-		{from: 13, to: 5}/*,
+		{from: 13, to: 5},
 		{from: 14, to: 11},
 		{from: 15, to: 11},
 		{from: 16, to: 11},
 		{from: 17, to: 11},
 		{from: 18, to: 11},
-		{from: 19, to: 11}*/
+		{from: 19, to: 11}
     ];
 
     // create a network
@@ -83,16 +86,28 @@
     };
 	
     var options = { 
-
+        nodes: {
+          borderWidth:4,
+          size:30,
+	      color: {
+            border: '#222222',
+            background: '#666666'
+          },
+          font:{color:'#eeeeee'}
+        },
+        edges: {
+          color: 'lightgray'
+        }
 	};
 
     // initialize your network!
-	var network = new vis.Network(container, data, options);
+	network = new vis.Network(container, data, options);
 	//network.clustering.cluster(options);
-	//clusterPOLE();
+	clusterPOLE();
 	clusterBOARD();
 	clusterTEAM();
 	clusterESN();
+	
 
 	
 	function clusterESN(){
@@ -105,7 +120,8 @@
 				label:'ESN LILLE',
 				id:'clusterESN', 
 				shape: 'circularImage',
-				allowSingleNodeCluster: true
+				allowSingleNodeCluster: true,
+				image: DIR + 'icon_esnl.jpg'
 			},
 			clusterEdgeProperties: {hidden: true}
 		};
@@ -114,7 +130,7 @@
 	}
 	
 	function clusterBOARD(){
-		network.setData(data);
+		//network.setData(data);
 	    optionsBOARD = { 
 			joinCondition:function(nodeOptions) {
 			return nodeOptions.board === 1;
@@ -124,7 +140,8 @@
 				label:'BOARD',
 				id:'clusterBOARD', 
 				shape: 'circularImage',
-				allowSingleNodeCluster: true
+				allowSingleNodeCluster: true,
+				image: DIR + 'icon_board.jpg'
 			},
 			//clusterEdgeProperties: {hidden: true}
 		};
@@ -143,35 +160,36 @@
 				label:'TEAM',
 				id:'clusterTEAM', 
 				shape: 'circularImage',
-				allowSingleNodeCluster: true
+				allowSingleNodeCluster: true,
+				image: DIR + 'icon_team.png'
 			},
 		};
 		network.cluster(optionsTEAM);
 		click();		
 	}
-/*
+
 	function clusterPOLE() {
-		//network.setData(data);
+		network.setData(data);
 	    optionsPOLE = { 
 			joinCondition:function(nodeOptions) {
 			return nodeOptions.pole === 1;
 			},
 			clusterNodeProperties: {
-				pole : 1,
+				board : 1,
 				label:'RESPOS',
 				id:'clusterPOLE', 
 				shape: 'circularImage',
-				allowSingleNodeCluster: true
+				allowSingleNodeCluster: true,
+				image: DIR + 'icon_pole.jpg'
 			},
 		};
 		network.cluster(optionsPOLE);
 		click();
 	}
-*/
+
 	function click(){
 	    network.on('click', function (params) {
-			//document.write(params.nodes);
-	        if (params.nodes.length == 1) {
+			if (params.nodes.length == 1) {
 	            if (network.isCluster(params.nodes[0]) == true) {
 	                network.openCluster(params.nodes[0]);
 					
