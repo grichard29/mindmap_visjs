@@ -102,11 +102,28 @@
 
     // initialize your network!
 	network = new vis.Network(container, data, options);
+		
+		
+	network.on('click', function (params) {
+		var options = {
+			scale : 1.0,
+			animation : {
+				duration : 1000,
+				easingFunction : "easeInOutQuad"
+			}
+		};
+		//console.log(network.getPositions(params.nodes));
+		network.focus(params.nodes);
+	});
+	
+	
+	/*
 	//network.clustering.cluster(options);
 	clusterPOLE();
 	clusterBOARD();
 	clusterTEAM();
 	clusterESN();
+	*/
 	
 
 	
