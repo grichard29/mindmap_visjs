@@ -30,7 +30,7 @@
 		
 	</div>
 	<!--<canvas id="canvas"></canvas>-->
-	<textarea id="testta" readonly></textarea>
+	<textarea id="testta" hidden=true readonly></textarea>
 	<script type="text/javascript">
 
 
@@ -142,21 +142,21 @@
 		//console.log(params);
 		if (params.nodes.length == 1){
 			network.focus(params.nodes,options);
-					var i = params.nodes[0]-1;
-		label=nodes[i].label;
-		console.log(label);
+			var i = params.nodes[0]-1;
+			label=nodes[i].label;
+			console.log(label);
 		if (params.edges.length == 1){
 			//canvas.style="position: absolute";
 			//canvas.style="display:true";
 
 			//multiMeasureText(read.responseText,canvas.height,canvas.width);
 			//createCanvas();
-			testta.style="display: true;";
+			testta.hidden=false;
 			createComment();
 		} else {
 			//canvas.style="position: relative";
 			//canvas.style="display:none";
-			testta.style="display: none;";
+			testta.hidden=true;
 		}
 		} else {
 			//canvas.style="display:none";
