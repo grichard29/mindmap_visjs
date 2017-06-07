@@ -1,27 +1,44 @@
 <html>
 <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
     <script type="text/javascript" src="js/vis/dist/vis.min.js"></script>
     <link href="js/vis/dist/vis.min.css" rel="stylesheet" type="text/css" />
 
     <style type="text/css">
         #mynetwork {
-            width: 800px;
-            height: 800px;
             border: 1px solid lightgray;
        		background-color:#333333;
+			z-index: -1;
        }
+	   #testta{
+			border: 1px;
+			position:absolute;
+			left: 8px;
+			top: 8px;
+			height: 100%;
+			width: 30%;
+			resize: none;
+			opacity: 0.5;
+			
+	   }
     </style>
 
 </head>
 <body>
 
-	<div id="mynetwork"></div>
-	
+	<div id="mynetwork">
+		
+	</div>
+	<!--<canvas id="canvas"></canvas>-->
+	<textarea id="testta" readonly></textarea>
 	<script type="text/javascript">
 
 
     var DIR = 'js/img_cm/';
-
+	
+	var commentaire = document.getElementById("testta");
+	//commentaire.value="blabla";	
+	
 	var clusterIndex = 0;
 	var clusters = [];
     var lastClusterZoomLevel = 0;
@@ -30,21 +47,18 @@
     // create an array with nodes
     var nodes = [
         {id: 1, label: 'ESN LILLE', shape: 'circularImage',esn:1, image: DIR + 'icon_esnl.jpg', fixed : true },
-        {id: 3, label: 'OUTILS', shape: 'circularImage', esn:1, image: DIR + 'icon_outils.png', fixed : true },
-        {id: 4, label: 'MISSION', shape: 'circularImage', esn:1, image: DIR + 'icon_missions.jpg', fixed : true },
-
         {id: 2, label: 'TEAM', shape: 'circularImage', team:1, image: DIR + 'icon_team.png', fixed : true },
-		{id: 6, label: 'GTI', shape: 'circularImage', team:1, image: DIR + 'icon_gti.jpg', fixed : true },
+		{id: 3, label: 'OUTILS', shape: 'circularImage', esn:1, image: DIR + 'icon_outils.png', fixed : true },
+        {id: 4, label: 'MISSION', shape: 'circularImage', esn:1, image: DIR + 'icon_missions.jpg', fixed : true },
+		{id: 5, label: 'BOARD', shape: 'circularImage', board:1, image: DIR + 'icon_board.jpg', fixed : true },
+        {id: 6, label: 'GTI', shape: 'circularImage', team:1, image: DIR + 'icon_gti.jpg', fixed : true },
 		{id: 7, label: 'POLES', shape: 'circularImage', team:1, image: DIR + 'icon_pole.jpg', fixed : true },
 		{id: 8, label: 'SCV', shape: 'circularImage', team:1, image: DIR + 'icon_scv.jpg', fixed : true },
-
-		{id: 5, label: 'BOARD', shape: 'circularImage', board:1, image: DIR + 'icon_board.jpg', fixed : true },
 		{id: 9, label: 'PRESIDENT E', shape: 'circularImage', board:1, image: DIR + 'icon_president.png', fixed : true },
 		{id: 10, label: 'VP', shape: 'circularImage', board:1, image: DIR + 'icon_vp.png', fixed : true },
 		{id: 11, label: 'RESPOS', shape: 'circularImage', pole:1, image: DIR + 'icon_respo.jpg', fixed : true },
 		{id: 12, label: 'SECRETAIRE', shape: 'circularImage', board:1, image: DIR + 'icon_secretaire.jpg', fixed : true },
 		{id: 13, label: 'TRESORIER E', shape: 'circularImage', board:1, image: DIR + 'icon_tresorier.jpg', fixed : true },
-		
 		{id: 14, label: 'COMMUNICATION', shape: 'circularImage', pole:1, image: DIR + 'icon_com.jpg', fixed : true },
 		{id: 15, label: 'CULTURE', shape: 'circularImage', pole:1, image: DIR + 'icon_culture.png', fixed : true },
 		{id: 16, label: 'PARTENARIAT', shape: 'circularImage', pole:1, image: DIR + 'icon_part.jpg', fixed : true },
@@ -96,14 +110,27 @@
           font:{color:'#eeeeee'}
         },
         edges: {
-          color: 'lightgray'
-        }
+          color: 'lightgray',
+		  smooth: {
+		  type: 'continuous',
+			roundness: 0
+		  }
+        },
+		physics: {
+			repulsion: {
+				nodeDistance: 100,
+			}
+		},
+		interaction: {
+			zoomView : false
+		}
 	};
-
+	//var canvas = document.getElementById("canvas");
+	//var ctx = canvas.getContext("2d");
+	
     // initialize your network!
 	network = new vis.Network(container, data, options);
-		
-		
+	var label="";
 	network.on('click', function (params) {
 		var options = {
 			scale : 1.0,
@@ -112,11 +139,129 @@
 				easingFunction : "easeInOutQuad"
 			}
 		};
-		//console.log(network.getPositions(params.nodes));
-		network.focus(params.nodes,options);
+		//console.log(params);
+		if (params.nodes.length == 1){
+			network.focus(params.nodes,options);
+					var i = params.nodes[0]-1;
+		label=nodes[i].label;
+		console.log(label);
+		if (params.edges.length == 1){
+			//canvas.style="position: absolute";
+			//canvas.style="display:true";
+
+			//multiMeasureText(read.responseText,canvas.height,canvas.width);
+			//createCanvas();
+			testta.style="display: true;";
+			createComment();
+		} else {
+			//canvas.style="position: relative";
+			//canvas.style="display:none";
+			testta.style="display: none;";
+		}
+		} else {
+			//canvas.style="display:none";
+			network.fit({animation: {duration: 1000, easingFunction:"easeInOutQuad"}});
+		}
+
 	});
+
+	function createComment(){
+		var read = new XMLHttpRequest();
+        read.open('GET', "infos/"+label+".txt", false);
+        read.send();
+		var text = read.responseText;
+		testta.value=text;
+	}
 	
+	function createCanvas(){
+		
+		ctx.font = "15px Comic Sans MS";
+		ctx.fillStyle = "red";
+		ctx.textAlign = "center";
+		var read = new XMLHttpRequest();
+        read.open('GET', "infos/"+label+".txt", false);
+        read.send();
+		//var text = multiMeasureText(read.responseText,canvas.height,canvas.width);
+		var text=read.responseText;
+		ctx.fillText(text, canvas.width/2, canvas.height/2); 
 	
+	}
+	var multiFillText = function(text, x, y, lineHeight, fitWidth) {
+		var draw = x !== null && y !== null;
+	
+		text = text.replace(/(\r\n|\n\r|\r|\n)/g, "\n");
+		sections = text.split("\n");
+	
+		var i, str, wordWidth, words, currentLine = 0,
+			maxHeight = 0,
+			maxWidth = 0;
+	
+		var printNextLine = function(str) {
+			if (draw) {
+				ctx.fillText(str, x, y + (lineHeight * currentLine));
+			}
+	
+			currentLine++;
+			wordWidth = ctx.measureText(str).width;
+			if (wordWidth > maxWidth) {
+				maxWidth = wordWidth;
+			}
+		};
+	
+		for (i = 0; i < sections.length; i++) {
+			words = sections[i].split(' ');
+			index = 1;
+	
+			while (words.length > 0 && index <= words.length) {
+	
+				str = words.slice(0, index).join(' ');
+				wordWidth = ctx.measureText(str).width;
+	
+				if (wordWidth > fitWidth) {
+					if (index === 1) {
+					// Falls to this case if the first word in words[] is bigger than fitWidth
+					// so we print this word on its own line; index = 2 because slice is
+						str = words.slice(0, 1).join(' ');
+						words = words.splice(1);
+					} else {
+						str = words.slice(0, index - 1).join(' ');
+						words = words.splice(index - 1);
+					}
+ 
+					printNextLine(str);
+ 
+					index = 1;
+				} else {
+					index++;
+				}
+			}
+ 
+        // The left over words on the last line
+			if (index > 0) {
+				printNextLine(words.join(' '));
+			}
+ 
+ 
+		}
+	
+		maxHeight = lineHeight * (currentLine);
+ /*
+		if (DEBUG) {
+			ctx.strokeRect(x, y, maxWidth, maxHeight);
+		}
+ */
+		if (!draw) {
+			return {
+				height: maxHeight,
+				width: maxWidth
+			};
+		}
+	};
+ 
+	var multiMeasureText = function(text, lineHeight, fitWidth) {
+		return multiFillText(text, null,null, lineHeight, fitWidth);
+	}	
+
 	/*
 	//network.clustering.cluster(options);
 	clusterPOLE();
@@ -124,7 +269,6 @@
 	clusterTEAM();
 	clusterESN();
 	*/
-	
 
 	
 	function clusterESN(){
@@ -203,7 +347,8 @@
 		network.cluster(optionsPOLE);
 		click();
 	}
-
+	
+	/*
 	function click(){
 	    network.on('click', function (params) {
 			if (params.nodes.length == 1) {
@@ -214,7 +359,7 @@
 	        }
 	    });
 	};
-	
+	*/
 
 	</script>
 </body>
