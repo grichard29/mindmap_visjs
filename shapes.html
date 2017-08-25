@@ -1,16 +1,16 @@
 <html>
 <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0" charset = "UTF-8">
     <script type="text/javascript" src="js/vis/dist/vis.min.js"></script>
-    <link href="js/vis/dist/vis.min.css" rel="stylesheet" type="text/css" />
+    <link href="js/vis/dist/vis.min.css" rel="stylesheet" type="text/css"/>
 
     <style type="text/css">
-        #mynetwork {
+       #mynetwork {
             border: 1px solid lightgray;
        		background-color:#333333;
 			z-index: -1;
        }
-	   #testta{
+	   #description{
 			border: 1px;
 			position:absolute;
 			left: 8px;
@@ -18,8 +18,7 @@
 			height: 98.5%;
 			width: 30%;
 			resize: none;
-			opacity: 0.5;
-			
+			opacity: 0.6;	
 	   }
 	   
 	   #modify{
@@ -30,6 +29,16 @@
 			height: 75px;
 			width: 75px;
 	   }
+	   
+	   #save{
+			border: 1px;
+			position: absolute;
+			right: 20px;
+			top: 115px;
+			height: 75px;
+			width: 75px;
+	   }
+	   
     </style>
 
 </head>
@@ -39,9 +48,10 @@
 		
 	</div>
 	<!--<canvas id="canvas"></canvas>-->
-	<textarea id="testta" hidden=true readonly></textarea>
+	<textarea id="description" hidden=true readonly></textarea>
 	<img src="js/img_cm/pencil.png" id="modify" hidden=true></img>
-	<script type="text/javascript">
+	<img src="js/img_cm/save.png" id="save" hidden=true></img>
+	<script type="text/javascript" >
 
 
     var DIR = 'js/img_cm/';
@@ -139,9 +149,26 @@
 	network = new vis.Network(container, data, options);
 	var label="";
 	
+
+
 	modify.onclick = function(){
-		testta.removeAttribute('readonly');
-		testta.attributes.opacity=1;
+		description.removeAttribute('readonly');
+		description.style.opacity = 1;
+	};
+		
+
+	save.onclick = function(){
+		document.getElementById("description").readOnly=true;
+		description.style.opacity=0.6;
+	
+		var path = "infos/"+label+".txt";
+		var dataToSave = description.value;
+		var post = new XMLHttpRequest();
+		post.open('POST','php/save.php',false);
+		post.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		post.setRequestHeader('Cache-Control', 'no-cache');
+		post.send('dataToSave=' + dataToSave + '&path=' + path);
+
 	};
 	
 	network.on('click', function (params) {
@@ -157,37 +184,51 @@
 			network.focus(params.nodes,options);
 			var i = params.nodes[0]-1;
 			label=nodes[i].label;
-			console.log(label);
+			//console.log(label);
 		if (params.edges.length == 1){
 			//canvas.style="position: absolute";
 			//canvas.style="display:true";
 
 			//multiMeasureText(read.responseText,canvas.height,canvas.width);
 			//createCanvas();
-			testta.hidden=false;
+			description.hidden=false;
 			modify.hidden=false;
-			createComment();
+			save.hidden=false;
+			loadDescription();
 		} else {
 			//canvas.style="position: relative";
 			//canvas.style="display:none";
-			testta.hidden=true;
+			description.hidden=true;
 			modify.hidden=true;
+			save.hidden=true;
 		}
 		} else {
 			//canvas.style="display:none";
-			testta.hidden=true;
+			description.style.opacity = 0.6;
+			description.hidden=true;
 			modify.hidden=true;
+			save.hidden=true;
 			network.fit({animation: {duration: 1000, easingFunction:"easeInOutQuad"}});
 		}
 
 	});
-
-	function createComment(){
+	
+	
+	function loadDescription(){
 		var read = new XMLHttpRequest();
         read.open('GET', "infos/"+label+".txt", false);
         read.send();
 		var text = read.responseText;
-		testta.value=text;
+		description.value=text;
+		//read.send(params);
+		//console.log(params);
+		//read.setRequestHeader("Connection", "close");
+		}
+	
+	function saveData(data, fileName){
+		var a = document.createElement("a");
+		document.body.appendChild(a);
+		a.style = "display: none";
 	}
 	
 
